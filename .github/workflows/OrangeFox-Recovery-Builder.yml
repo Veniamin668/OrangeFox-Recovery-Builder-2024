@@ -186,6 +186,23 @@ jobs:
         fi
       continue-on-error: true
 
+    - name: Final Rename
+      run: |
+        cd ${{ env.FILE_PATH }}/
+
+        # IMG
+        if ls *.img 1> /dev/null 2>&1; then
+          IMG_FILE=$(ls *.img | head -n 1)
+          mv "$IMG_FILE" "OrangeFox-Unofficial-${{ github.event.inputs.DEVICE_NAME }}.img"
+          echo "FINAL_IMG=OrangeFox-Unofficial-${{ github.event.inputs.DEVICE_NAME }}.img" >> $GITHUB_ENV
+        fi
+
+        # ZIP (installer)
+        if [ -f recovery-installer.zip ]; then
+          mv recovery-installer.zip "OrangeFox-Unofficial-${{ github.event.inputs.DEVICE_NAME }}.zip"
+          echo "FINAL_ZIP=OrangeFox-Unofficial-${{ github.event.inputs.DEVICE_NAME }}.zip" >> $GITHUB_ENV
+        fi
+
     - name: Upload to Release
       if: env.CHECK_IMG_IS_OK == 'true'
       uses: softprops/action-gh-release@v1
